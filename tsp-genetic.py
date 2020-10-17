@@ -69,7 +69,7 @@ class City(object):
     """
     def __init__(self, name, x, y, distance_to=None):
         # Name and coordinates:
-        self.name = name
+        self.name   : str   = name
         self.x = self.graph_x = x
         self.y = self.graph_y = y
         # Appends itself to the global list of cities:
@@ -96,6 +96,9 @@ class City(object):
     # Calculates the distance between two cartesian points..
     def point_dist(self, x1,y1,x2,y2):
         return ((x1-x2)**2 + (y1-y2)**2)**(0.5)
+
+    def print(self):
+        print(f"{self.name} : {self.x},{self.y}")
 
 
 # Route Class
@@ -853,9 +856,21 @@ def random_cities():
     ######## create and run an application instance:
     app = App(n_generations=k_n_generations,pop_size=k_population_size, graph=True)
 
+def read_csv():
+    cities = []
+    with open(csv_name, 'rt') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            cities.append(City(row[0],float(row[1]),float(row[2])))
+        f.close()
+
+    for city in cities:
+        city.print()
+
 if __name__ == '__main__':
     """Select only one function: random, specific or specific2"""
     # specific_cities2()
-    #specific_cities()
-    random_cities()
-
+    # specific_cities()
+    # random_cities()
+    read_csv()
+    
