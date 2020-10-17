@@ -47,13 +47,6 @@ tournament_size = 7
 # If elitism is True, the best from one generation will carried over to the next.
 elitism = True
 
-# Read city data from csv?
-csv_cities = False
-
-# Full path for csv file. The r prefix avoids any conflicts with backslashes.
-csv_name = 'cities.csv'
-
-
 # City class
 class City(object):
     """
@@ -69,7 +62,7 @@ class City(object):
     """
     def __init__(self, name, x, y, distance_to=None):
         # Name and coordinates:
-        self.name   : str   = name
+        self.name = name
         self.x = self.graph_x = x
         self.y = self.graph_y = y
         # Appends itself to the global list of cities:
@@ -97,8 +90,8 @@ class City(object):
     def point_dist(self, x1,y1,x2,y2):
         return ((x1-x2)**2 + (y1-y2)**2)**(0.5)
 
-    def print(self):
-        print(f"{self.name} : {self.x},{self.y}")
+    # def print(self):
+    #     print(f"{self.name} : {self.x},{self.y}")
 
 
 # Route Class
@@ -225,7 +218,7 @@ class GA(object):
     crossover(parent1, parent2): Returns a child route after breeding the two parent routes. 
 
     """
-    def crossover_experimental(routeA,routeB):
+    def crossover_experimental(self,routeA,routeB):
         '''
             Experimental crossover algorithm using a spidering-out idea. Less effective at the moment.
         '''
@@ -394,7 +387,7 @@ class GA(object):
 
         return route_to_mut
 
-    def mutate_2opt(route_to_mut):
+    def mutate_2opt(self,route_to_mut):
         '''
         Route() --> Route()
 
@@ -493,9 +486,6 @@ class App(object):
         '''
         Initiates an App object to run for n_generations with a population of size pop_size
         '''
-
-        if csv_cities:
-            self.read_csv()
 
         self.n_generations = n_generations
         self.pop_size = pop_size
@@ -627,12 +617,6 @@ class App(object):
             the_canvas.pack()
             the_canvas.update_idletasks()
 
-    def read_csv(self):
-        with open(csv_name, 'rt') as f:
-            reader = csv.reader(f)
-            for row in reader:
-                new_city = City(row[0],float(row[1]),float(row[2]))
-
     def GA_loop(self,n_generations,pop_size, graph=False):
         '''
         Main logic loop for the GA. Creates and manages populations, running variables etc.
@@ -742,135 +726,18 @@ class App(object):
 #### Declare cities here: ####
 ##############################
 
-# Australian Cities:
-# adelaide = City('adelaide', 138.60, -34.93)
-# brisbane = City('brisbane', 153.02, -27.47)
-# canberra = City('canberra', 149.13, -35.30)
-# darwin = City('darwin', 130.83, -12.45)
-# hobart = City('hobart', 147.32, -42.88)
-# melbourne = City('melbourne', 144.97, -37.82)
-# perth = City('perth', 115.85, -31.95)
-# sydney = City('sydney', 151.20, -33.87)
-
-## Random cities
-# i = City('c1', 10, 2)
-# j = City('c2', 1, 22)
-# k = City('c3', 2, 13)
-
-def specific_cities2():
-    """function to calculate the route for files in data folder with coordinates"""
-    start_time = time.time()
-    f = open("data/pr2392-2.in", "r")
-    f.readline()
-    f.readline()
-    f.readline()
-    lines = int(f.readline().split()[2])
-    f.readline()
-    f.readline()
-    for i, li in enumerate(f.readlines(), start=1):
-        os.system('cls' if os.name=='nt' else 'clear')
-        print("Read '{}': {}/{} lines".format(f.name, i, lines))
-        c = li.split()
-        if not 'EOF' in c:
-            tmp = City("C" + str(c[0]), float(c[1]), float(c[2]))
-    print("---Time reading file and creating Cities: %s seconds ---\n" % str(time.time() - start_time))
-    
-    start_time = time.time()
-    print("Calculating distances...")
-    for city in list_of_cities:
-        city.calculate_distances()
-    print("---Time Calculating distances: %s seconds ---\n" % str(time.time() - start_time))
-    
-    print("Searching for shortest way possible...")
-    try:
-        start_time = time.time()
-        app = App(n_generations=k_n_generations,pop_size=k_population_size)
-        print("---Route found in %s seconds ---" % str(time.time() - start_time))
-    except Exception as e:
-        print("\n[ERROR]: %s\n" % e)
-    # try:
-    # except Exception, e:
-    #     print "[Exception]", e
-
-
-def specific_cities():
-    """function to calculate the route for files in data folder with distances"""
-    try:
-        start_time = time.time()
-        f = open("data/3x3.in", "r")
-        # f = open("data/bays29.in", "r")
-        # f = open("data/d493.in", "r")
-        # f = open("data/pr2392.in", "r")
-        lines = int(f.readline())
-        for i, li in enumerate(f.readlines(), start=1):
-            os.system('cls' if os.name=='nt' else 'clear')
-            print("Read '{}': {}/{} lines".format(f.name, i, lines))
-            d = {}
-            for j, line in enumerate(map(float, li.split()), start=1):
-                d["C" + str(j)] = line
-            tmp = City("C" + str(i), 10, 10, d)
-        print("--- %s seconds ---" % str(time.time() - start_time))
-        band = True
-    except Exception as e:
-        print(e)
-        band = False
-    if band:
-        print("Searching for shortest path possible...")
-        try:
-            start_time = time.time()
-            app = App(n_generations=k_n_generations,pop_size=k_population_size)
-            print("---Route was found in %s seconds ---" % str(time.time() - start_time))
-        except Exception as e:
-            print("\n[ERROR]: %s\n" % e)
-
-
-def random_cities():
-    i = City('i', 60, 200)
-    j = City('j', 180, 190)
-    k = City('k', 100, 180)
-    l = City('l', 140, 180)
-    m = City('m', 20, 160)
-    n = City('n', 100, 160)
-    o = City('o', 140, 140)
-    p = City('p', 40, 120)
-    q = City('q', 100, 120)
-    r = City('r', 180, 100)
-    s = City('s', 60, 80)
-    t = City('t', 120, 80)
-    u = City('u', 180, 60)
-    v = City('v', 20, 40)
-    w = City('w', 100, 40)
-    x = City('x', 200, 40)
-    a = City('a', 20, 20)
-    b = City('b', 60, 20)
-    c = City('c', 160, 20)
-    d = City('d', 68, 130)
-    e = City('e', 10, 10)
-    f = City('f', 75, 180)
-    g = City('g', 190, 190)
-    h = City('h', 200, 10)
-    # a1 = City('a1', 53, 99)
-
-    for city in list_of_cities:
-        city.calculate_distances()
-    ######## create and run an application instance:
-    app = App(n_generations=k_n_generations,pop_size=k_population_size, graph=True)
-
-def read_csv():
-    cities = []
-    with open(csv_name, 'rt') as f:
+def mexican_cities(visualize = False):
+    with open("mexicanCapitals.csv", 'rt') as f:
         reader = csv.reader(f)
         for row in reader:
-            cities.append(City(row[0],float(row[1]),float(row[2])))
+            City(row[0],float(row[1]),float(row[2]))
         f.close()
+    
+    for city in list_of_cities:
+        city.calculate_distances()
+    app = App(n_generations=k_n_generations,pop_size=k_population_size,graph=visualize)
 
-    for city in cities:
-        city.print()
 
 if __name__ == '__main__':
-    """Select only one function: random, specific or specific2"""
-    # specific_cities2()
-    # specific_cities()
-    # random_cities()
-    read_csv()
+    mexican_cities("-v" in sys.argv)
     
