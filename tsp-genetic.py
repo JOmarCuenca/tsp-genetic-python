@@ -9,6 +9,9 @@ mail@jackf.net
 
 Written for Python 3.1+
 
+Modified by:
+Jesús Omar Cuenca Espino 
+
 '''
 
 import random
@@ -39,7 +42,7 @@ k_mut_prob = 0.4
 # Number of generations to run for
 k_n_generations = 100
 # Population size of 1 generation (RoutePop)
-k_population_size = 100
+k_population_size = 800
 
 # Size of the tournament selection. 
 tournament_size = 7
@@ -721,10 +724,6 @@ class App(object):
     # Helper function for clearing terminal window
     def clear_term(self):
         os.system('cls' if os.name=='nt' else 'clear')
-
-##############################
-#### Declare cities here: ####
-##############################
 
 def mexican_cities(visualize = False):
     with open("mexicanCapitals.csv", 'rt') as f:
