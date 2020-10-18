@@ -37,7 +37,7 @@ list_of_cities =[]
 #########################################
 
 # probability that an individual Route will mutate
-k_mut_prob = 0.4
+k_mut_prob = 0.6
 
 # Number of generations to run for
 k_n_generations = 100
@@ -86,15 +86,17 @@ class City(object):
         with city name keys and float values
         ''' 
         for city in list_of_cities:
-            tmp_dist = self.point_dist(self.x, self.y, city.x, city.y)
-            self.distance_to[city.name] = tmp_dist
+            if(city.name not in self.distance_to):
+                tmp_dist = self.point_dist(self.x, self.y, city.x, city.y)
+                self.distance_to[city.name] = tmp_dist
 
     # Calculates the distance between two cartesian points..
     def point_dist(self, x1,y1,x2,y2):
         return ((x1-x2)**2 + (y1-y2)**2)**(0.5)
 
-    # def print(self):
-    #     print(f"{self.name} : {self.x},{self.y}")
+    def print(self):
+        print(f"{self.name} : {self.x},{self.y}")
+        print(self.distance_to)
 
 
 # Route Class
@@ -504,12 +506,12 @@ class App(object):
             self.window.wm_title("Generation 0")
 
             # initiates two canvases, one for current and one for best
-            self.canvas_current = Canvas(self.window, height=300, width=300)
-            self.canvas_best = Canvas(self.window, height=300, width=300)
+            self.canvas_current = Canvas(self.window, height=400, width=400)
+            self.canvas_best    = Canvas(self.window, height=400, width=400)
 
             # Initiates two labels
-            self.canvas_current_title = Label(self.window, text="Best route of current gen:")
-            self.canvas_best_title = Label(self.window, text="Overall best so far:")
+            self.canvas_current_title   = Label(self.window, text="Best route of current gen:")
+            self.canvas_best_title      = Label(self.window, text="Overall best so far:")
 
             # Initiates a status bar with a string
             self.stat_tk_txt = StringVar()
@@ -517,8 +519,8 @@ class App(object):
 
             # creates dots for the cities on both of the canvases
             for city in list_of_cities:
-                self.canvas_current.create_oval(city.graph_x-2, city.graph_y-2, city.graph_x + 2, city.graph_y + 2, fill='blue')
-                self.canvas_best.create_oval(city.graph_x-2, city.graph_y-2, city.graph_x + 2, city.graph_y + 2, fill='blue')
+                self.canvas_current.create_oval (city.graph_x-2, city.graph_y-2, city.graph_x + 3, city.graph_y + 3, fill='blue')
+                self.canvas_best.create_oval    (city.graph_x-2, city.graph_y-2, city.graph_x + 3, city.graph_y + 3, fill='blue')
 
             # Packs all the widgets (physically creates them and places them in order)
             self.canvas_current_title.pack()
@@ -725,11 +727,21 @@ class App(object):
     def clear_term(self):
         os.system('cls' if os.name=='nt' else 'clear')
 
+def setCityDistances(self : str,others : str) -> dict:
+    result = {self : 0.0}
+    for pair in others.strip().split(" "):
+        temp = pair.split("_")
+        result[temp[0]] = float(temp[1])
+    return result
+
 def mexican_cities(visualize = False):
     with open("mexicanCapitals.csv", 'rt') as f:
         reader = csv.reader(f)
         for row in reader:
-            City(row[0],float(row[1]),float(row[2]))
+            if len(row) > 3:
+                City(row[0].strip(),float(row[1]),float(row[2]),setCityDistances(row[0].strip(),row[3]))
+            else:
+                City(row[0].strip(),float(row[1]),float(row[2]))
         f.close()
     
     for city in list_of_cities:
@@ -739,4 +751,3 @@ def mexican_cities(visualize = False):
 
 if __name__ == '__main__':
     mexican_cities("-v" in sys.argv)
-    
