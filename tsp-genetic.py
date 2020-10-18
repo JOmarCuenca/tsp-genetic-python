@@ -309,7 +309,7 @@ class GA(object):
 
         For example:
             parent1: 0123456789
-            parent1: 5487961320
+            parent2: 5487961320
 
             start_pos = 0
             end_pos = 4
@@ -366,7 +366,6 @@ class GA(object):
     def mutate(self, route_to_mut):
         '''
         Route() --> Route()
-
         Swaps two random indexes in route_to_mut.route. Runs k_mut_prob*100 % of the time
         '''
         # k_mut_prob %
